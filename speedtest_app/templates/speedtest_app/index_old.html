@@ -1,0 +1,179 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Internet Speed Test</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .loading-animation {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #fff;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #1a1c2d 0%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="gradient-bg text-white min-h-screen">
+    <div class="container mx-auto px-4 py-12">
+        <h1 class="text-5xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+            Internet Speed Test
+        </h1>
+        
+        <div class="max-w-2xl mx-auto glass-effect rounded-2xl p-8 shadow-2xl">
+            <div class="space-y-8">
+                <!-- Download Speed -->
+                <div class="transform hover:scale-105 transition-transform duration-200">
+                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        Download Speed
+                    </h3>
+                    <div class="w-full bg-gray-700 rounded-full h-4 overflow-hidden">
+                        <div id="download-progress" class="progress-bar bg-gradient-to-r from-blue-500 to-blue-400 h-4 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <p id="download-speed" class="mt-2 text-lg">-- Mbps</p>
+                </div>
+
+                <!-- Upload Speed -->
+                <div class="transform hover:scale-105 transition-transform duration-200">
+                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                        </svg>
+                        Upload Speed
+                    </h3>
+                    <div class="w-full bg-gray-700 rounded-full h-4 overflow-hidden">
+                        <div id="upload-progress" class="progress-bar bg-gradient-to-r from-green-500 to-green-400 h-4 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <p id="upload-speed" class="mt-2 text-lg">-- Mbps</p>
+                </div>
+
+                <!-- Ping -->
+                <div class="transform hover:scale-105 transition-transform duration-200">
+                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        Ping
+                    </h3>
+                    <div class="w-full bg-gray-700 rounded-full h-4 overflow-hidden">
+                        <div id="ping-progress" class="progress-bar bg-gradient-to-r from-yellow-500 to-yellow-400 h-4 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <p id="ping-value" class="mt-2 text-lg">-- ms</p>
+                </div>
+
+                <button id="check-speed" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-4 px-6 rounded-xl transition duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                    <span id="button-text">Start Speed Test</span>
+                </button>
+            </div>
+
+            <!-- Previous Results -->
+            <!-- In your Previous Results section -->
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Previous Results</h2>
+                <div class="space-y-4">
+                    {% for result in latest_results %}
+                    <div class="glass-effect p-4 rounded-xl transform hover:scale-102 transition-transform duration-200">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="flex items-center"><span class="w-24">Download:</span> <span class="font-semibold">{{ result.download_speed|floatformat:2 }} Mbps</span></p>
+                                <p class="flex items-center"><span class="w-24">Upload:</span> <span class="font-semibold">{{ result.upload_speed|floatformat:2 }} Mbps</span></p>
+                                <p class="flex items-center"><span class="w-24">Ping:</span> <span class="font-semibold">{{ result.ping|floatformat:2 }} ms</span></p>
+                                <p class="flex items-center mt-2 text-sm text-blue-400">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    Server: {{ result.server_name }}, {{ result.server_country }}
+                                </p>
+                            </div>
+                            <p class="text-sm text-gray-400">{{ result.timestamp|date:"M j, Y, g:i a" }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function animateProgress(elementId, value, maxValue) {
+            const percentage = (value / maxValue) * 100;
+            $(`#${elementId}`).css({
+                width: `${Math.min(percentage, 100)}%`
+            });
+        }
+
+        $(document).ready(function() {
+            $('#check-speed').click(function() {
+                const button = $(this);
+                const buttonText = $('#button-text');
+                
+                // Disable button and show loading animation
+                button.prop('disabled', true);
+                buttonText.html('<span class="loading-animation"></span>Testing in progress...');
+                
+                // Reset progress bars with animation
+                $('.progress-bar').css('width', '0%');
+
+                $.ajax({
+                    url: '{% url "speedtest_app:check_speed" %}',
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            $('#download-speed').text(`${response.download_speed} Mbps`);
+                            $('#upload-speed').text(`${response.upload_speed} Mbps`);
+                            $('#ping-value').text(`${response.ping} ms`);
+
+                            animateProgress('download-progress', response.download_speed, 100);
+                            animateProgress('upload-progress', response.upload_speed, 100);
+                            animateProgress('ping-progress', response.ping, 100);
+
+                            // Reload page to show updated results
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2000);
+                        } else {
+                            alert('Error performing speed test: ' + response.error);
+                        }
+                    },
+                    error: function() {
+                        alert('Error connecting to server');
+                    },
+                    complete: function() {
+                        button.prop('disabled', false);
+                        buttonText.html('Start Speed Test');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
