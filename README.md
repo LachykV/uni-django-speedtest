@@ -66,7 +66,8 @@ This Django application provides a simple and modern interface for running inter
 3.  Observe the progress bars for download, upload, and ping speeds.
 4.  The results, including the last 5 tests, will be displayed on the page.
 
-![speedtest](https://github.com/user-attachments/assets/1a011def-eef4-4a2b-84f1-4da4cd2c8728)
+
+![speedtest](https://github.com/user-attachments/assets/78ae24cd-79cb-4534-9772-86194ff5ebd7)
 
 
 ## Key Features (Detailed)
