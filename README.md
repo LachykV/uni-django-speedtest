@@ -66,6 +66,9 @@ This Django application provides a simple and modern interface for running inter
 3.  Observe the progress bars for download, upload, and ping speeds.
 4.  The results, including the last 5 tests, will be displayed on the page.
 
+![speedtest](https://github.com/user-attachments/assets/1a011def-eef4-4a2b-84f1-4da4cd2c8728)
+
+
 ## Key Features (Detailed)
 1.  Database Storage: Results are stored in a database using the SpeedTestResult model, allowing for historical analysis and tracking.
 2.  Modern UI:  Tailwind CSS provides a clean and responsive user interface.
