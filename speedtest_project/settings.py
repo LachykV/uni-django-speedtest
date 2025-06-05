@@ -105,7 +105,7 @@ USE_TZ = True
 
 
 # Set your timezone here.
-TIME_ZONE = 'Asia/Jakarta'
+TIME_ZONE = 'Europe/Poland'
 
 # Make Django use the local timezone
 USE_TZ = True
